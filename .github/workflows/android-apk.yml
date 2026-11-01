@@ -46,6 +46,10 @@ jobs:
           keytool -genkeypair -v -keystore /root/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" || true
           find /root /usr/local/share /opt -path '*export_templates*' -maxdepth 7 2>/dev/null | head -30
           
+      - name: Install Android SDK components
+        run: |
+          yes | sdkmanager --sdk_root=/usr/lib/android-sdk "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+
       - name: Import project resources
         run: godot --headless --editor --path . --quit
 
