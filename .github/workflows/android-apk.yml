@@ -25,10 +25,9 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Configure Android export environment
+      - name: Configure Godot and Java
         shell: bash
         run: |
-          export HOME=/root
           echo "HOME=/root" >> "$GITHUB_ENV"
           echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> "$GITHUB_ENV"
           echo "/usr/lib/jvm/java-17-openjdk-amd64/bin" >> "$GITHUB_PATH"
@@ -40,35 +39,48 @@ jobs:
           export/android/android_sdk_path = "/usr/lib/android-sdk"
           EOF
           mkdir -p /root/.local/share/godot/export_templates/4.3.stable
-          if [ -d /usr/local/share/godot/export_templates/4.3.stable ]; then
-            cp -a /usr/local/share/godot/export_templates/4.3.stable/. /root/.local/share/godot/export_templates/4.3.stable/
-          fi
+          cp -a /usr/local/share/godot/export_templates/4.3.stable/. /root/.local/share/godot/export_templates/4.3.stable/
+          test -s /root/.local/share/godot/export_templates/4.3.stable/android_debug.apk
+          test -s /root/.local/share/godot/export_templates/4.3.stable/android_release.apk
           keytool -genkeypair -v -keystore /root/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" || true
-          find /root /usr/local/share /opt -path '*export_templates*' -maxdepth 7 2>/dev/null | head -30
-          
-      - name: Install Android SDK components
+
+      - name: Install complete Android SDK toolchain
+        shell: bash
         run: |
-          yes | sdkmanager --sdk_root=/usr/lib/android-sdk "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          yes | sdkmanager --sdk_root=/usr/lib/android-sdk --licenses
+          yes | sdkmanager --sdk_root=/usr/lib/android-sdk \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;34.0.0" \
+            "cmdline-tools;latest" \
+            "cmake;3.10.2.4988404" \
+            "ndk;23.2.8568313"
+          test -x /usr/lib/android-sdk/platform-tools/adb
+          test -x /usr/lib/android-sdk/build-tools/34.0.0/apksigner
+          test -d /usr/lib/android-sdk/ndk/23.2.8568313
+          test -d /usr/lib/android-sdk/cmake/3.10.2.4988404
 
       - name: Import project resources
-        run: godot --headless --editor --path . --quit
+        shell: bash
+        run: godot --headless --editor --path . --quit --verbose
 
-      - name: Diagnose Android toolchain
+      - name: Validate Android toolchain
+        shell: bash
         run: |
-          echo "JAVA_HOME=$JAVA_HOME"
           java -version
-          ls -ld "$JAVA_HOME" /usr/lib/android-sdk /usr/lib/android-sdk/build-tools || true
-          ls /usr/lib/android-sdk/build-tools || true
-          keytool -list -keystore /root/debug.keystore -storepass android || true
-          cat /root/.config/godot/editor_settings-4.tres
+          godot --version
+          ls -l /usr/lib/android-sdk/platform-tools/adb
+          ls -l /usr/lib/android-sdk/build-tools/34.0.0/apksigner
+          ls -ld /usr/lib/android-sdk/ndk/23.2.8568313 /usr/lib/android-sdk/cmake/3.10.2.4988404
+          keytool -list -keystore /root/debug.keystore -storepass android
+          test -s /root/.local/share/godot/export_templates/4.3.stable/android_debug.apk
 
       - name: Export debug APK
+        shell: bash
         run: |
           mkdir -p build
-          godot --headless --path . --export-debug "Android" build/thealem-rts.apk
-
-      - name: Verify APK
-        run: test -s build/thealem-rts.apk
+          godot --headless --verbose --path . --export-debug "Android" build/thealem-rts.apk
+          test -s build/thealem-rts.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
