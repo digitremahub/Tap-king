@@ -111,15 +111,17 @@ export default function TapGame({ onFinish }: Props) {
     setBonus(null);
   }
 
-  // The duck itself climbs; the scenery stays anchored to avoid looping jumps.
+  // The duck climbs while platforms scroll downward at a slower rate.
+  // Both offsets follow the real score, so a fall reverses the movement smoothly.
   const climbOffset = Math.min(height * 7, 190);
+  const sceneryOffset = height * 3.5;
 
   return <section className="game-card">
     <div className="game-hud"><div><small>ALTITUDE</small><b>{height} m</b></div><div className="timer"><small>TEMPS</small><b>{time}s</b></div><div><small>COMBO</small><b>x{combo >= 10 ? "1.5" : combo >= 5 ? "1.2" : "1"}</b></div></div>
     <div className="tower">
       <div className="cloud cloud-a">☁️</div><div className="cloud cloud-b">☁️</div>
       <div className="height-marker">ÉTAGE {Math.floor(height / 10) + 1}</div>
-      <div className="tower-world"><div className="platform p1"></div><div className="platform p2"></div><div className="platform p3"></div><div className="platform p4"></div><div className="platform p5"></div></div>
+      <div className="tower-world" style={{ transform: `translateY(${sceneryOffset}px)` }}><div className="platform p1"></div><div className="platform p2"></div><div className="platform p3"></div><div className="platform p4"></div><div className="platform p5"></div></div>
       <div className={`duck ${obstacle ? "wobble" : ""}`} style={{ bottom: `${58 + climbOffset}px` }}>🦆<span>👑</span></div>
       <div className="tower-floor">🏰</div>
       {obstacle && <div className="warning">⚠️ ATTENDS !</div>}
