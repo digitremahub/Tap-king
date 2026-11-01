@@ -49,6 +49,15 @@ jobs:
       - name: Import project resources
         run: godot --headless --editor --path . --quit
 
+      - name: Diagnose Android toolchain
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME"
+          java -version
+          ls -ld "$JAVA_HOME" /usr/lib/android-sdk /usr/lib/android-sdk/build-tools || true
+          ls /usr/lib/android-sdk/build-tools || true
+          keytool -list -keystore /root/debug.keystore -storepass android || true
+          cat /root/.config/godot/editor_settings-4.tres
+
       - name: Export debug APK
         run: |
           mkdir -p build
