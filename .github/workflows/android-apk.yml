@@ -25,6 +25,27 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Configure Android export environment
+        shell: bash
+        run: |
+          export HOME=/root
+          echo "HOME=/root" >> "$GITHUB_ENV"
+          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> "$GITHUB_ENV"
+          echo "/usr/lib/jvm/java-17-openjdk-amd64/bin" >> "$GITHUB_PATH"
+          mkdir -p /root/.config/godot
+          cat > /root/.config/godot/editor_settings-4.tres <<'EOF'
+          [gd_resource type="EditorSettings" format=3]
+          [resource]
+          export/android/java_sdk_path = "/usr/lib/jvm/java-17-openjdk-amd64"
+          export/android/android_sdk_path = "/usr/lib/android-sdk"
+          EOF
+          mkdir -p /root/.local/share/godot/export_templates/4.3.stable
+          if [ -d /usr/local/share/godot/export_templates/4.3.stable ]; then
+            cp -a /usr/local/share/godot/export_templates/4.3.stable/. /root/.local/share/godot/export_templates/4.3.stable/
+          fi
+          keytool -genkeypair -v -keystore /root/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" || true
+          find /root /usr/local/share /opt -path '*export_templates*' -maxdepth 7 2>/dev/null | head -30
+          
       - name: Import project resources
         run: godot --headless --editor --path . --quit
 
