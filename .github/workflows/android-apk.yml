@@ -47,7 +47,9 @@ jobs:
           TEMPLATE_DIR="$(dirname "$TEMPLATE_SOURCE")"
           TEMPLATE_DEST="/root/.local/share/godot/export_templates/4.3.stable"
           mkdir -p "$TEMPLATE_DEST"
-          cp -a "$TEMPLATE_DIR/." "$TEMPLATE_DEST/"
+          if [ "$TEMPLATE_DIR" != "$TEMPLATE_DEST" ]; then
+            cp -a "$TEMPLATE_DIR/." "$TEMPLATE_DEST/"
+          fi
           test -s "$TEMPLATE_DEST/android_debug.apk"
           test -s "$TEMPLATE_DEST/android_release.apk"
           keytool -genkeypair -v -keystore /root/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" || true
