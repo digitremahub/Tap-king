@@ -1,5 +1,7 @@
-node_modules
-.next
-out
-.env*
+.godot/
+.import/
+.export/
+.export_presets.cfg
+*.tmp
+*.bak
 .DS_Store

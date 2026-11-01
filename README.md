@@ -1,50 +1,30 @@
-# TAP KING — Prototype 0.1
+# THËALEM RTS — Le conflit des Sept Royaumes
 
-Jeu web mobile-first d'ascension verticale par tapotements.
+Projet de jeu de stratégie en temps réel (RTS) mobile dans l'univers de **Thëalem**.
 
-## Stack
-- Next.js 14 / React 18
-- TypeScript
-- Phaser prévu pour la prochaine étape de rendu du jeu
-- Vercel pour l'hébergement
+> Le dépôt TAP KING est réaffecté à THËALEM RTS. Son ancien contenu n'est plus présent dans l'arborescence actuelle ; l'historique Git reste conservé.
 
-## Fonctionnalités présentes
-- Écran d'accueil TAP KING
-- Run solo de 20 secondes
-- Compteur d'altitude et record local
-- Combos
-- Événements de plateforme instable et chutes
-- Collecte aléatoire de quatre bonus
-- Utilisation de bonus
-- Partage du résultat via Web Share ou copie
+## Direction du projet
+- **Plateforme :** Android et iOS, mobile uniquement.
+- **Caméra :** 3D isométrique libre, dans l'esprit de Warcraft III.
+- **Gameplay :** RTS en temps réel, sélection et contrôle direct des unités.
+- **Campagne :** événements situés pendant la saga, en respectant l'ordre des révélations.
+- **Périmètre :** campagne solo d'abord, architecture préparée pour le multijoueur.
 
-## Lancer en local
-```bash
-npm install
-npm run dev
-```
-Ouvrir http://localhost:3000.
+## Technologie
+- Godot 4.x
+- GDScript typé
+- Scènes 3D natives Godot
+- GitHub pour le code et le suivi
+- Backend en ligne (comptes, sauvegardes cloud, matchmaking) à étudier après le prototype solo
 
-## Build
-```bash
-npm run build
-```
+## Démarrage
+1. Installer Godot 4.x.
+2. Importer ce dépôt comme projet Godot en ouvrant `project.godot`.
+3. Lancer le projet avec F6/F5.
 
-## Déploiement
-Importer le dépôt GitHub dans Vercel, framework Next.js, commande de build `npm run build`.
+Le prototype initial est un socle technique : terrain, caméra mobile, unités de démonstration, sélection et déplacement. Il ne constitue pas encore une version complète du jeu.
 
-## Limites connues du prototype
-- La boucle de jeu est une première simulation React/CSS, pas encore un moteur Phaser complet.
-- Le personnage et les plateformes utilisent des emojis et des formes CSS temporaires.
-- Les obstacles sont des fenêtres de timing ; le système devra être retravaillé pour rendre l'échec lisible et équitable.
-- Les bonus sont générés localement et ne sont pas synchronisés entre joueurs.
-- Le mode duel, les comptes, le classement et la validation serveur ne sont pas encore implémentés.
-- Les scores locaux ne sont pas anti-triche et ne doivent pas servir à un classement compétitif.
-- Le nom TAP KING est provisoire et doit faire l'objet d'une recherche d'antériorité.
-
-## Roadmap
-1. Remplacer le prototype d'interface par une scène Phaser 3.
-2. Ajouter tutoriel et calibrage du rythme.
-3. Ajouter défis asynchrones et validation serveur.
-4. Ajouter Supabase, profils et classements.
-5. Ajouter progression cosmétique et événements.
+## Documents
+- [Game design](docs/game-design.md)
+- [Référentiel canon](docs/canon-reference.md)
