@@ -57,14 +57,14 @@ jobs:
       - name: Install complete Android SDK toolchain
         shell: bash
         run: |
-          yes | sdkmanager --sdk_root=/usr/lib/android-sdk --licenses
+          yes | sdkmanager --sdk_root=/usr/lib/android-sdk --licenses || true
           yes | sdkmanager --sdk_root=/usr/lib/android-sdk \
             "platform-tools" \
             "platforms;android-34" \
             "build-tools;34.0.0" \
             "cmdline-tools;latest" \
             "cmake;3.10.2.4988404" \
-            "ndk;23.2.8568313"
+            "ndk;23.2.8568313" || true
           test -x /usr/lib/android-sdk/platform-tools/adb
           test -x /usr/lib/android-sdk/build-tools/34.0.0/apksigner
           test -d /usr/lib/android-sdk/ndk/23.2.8568313
