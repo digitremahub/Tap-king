@@ -38,10 +38,18 @@ jobs:
           export/android/java_sdk_path = "/usr/lib/jvm/java-17-openjdk-amd64"
           export/android/android_sdk_path = "/usr/lib/android-sdk"
           EOF
-          mkdir -p /root/.local/share/godot/export_templates/4.3.stable
-          cp -a /usr/local/share/godot/export_templates/4.3.stable/. /root/.local/share/godot/export_templates/4.3.stable/
-          test -s /root/.local/share/godot/export_templates/4.3.stable/android_debug.apk
-          test -s /root/.local/share/godot/export_templates/4.3.stable/android_release.apk
+          TEMPLATE_SOURCE="$(find / -type f -name android_debug.apk -print -quit 2>/dev/null)"
+          if [ -z "$TEMPLATE_SOURCE" ]; then
+            echo "Android export template not found"
+            find / -type d -path '*export_templates*' -print 2>/dev/null | head -50
+            exit 1
+          fi
+          TEMPLATE_DIR="$(dirname "$TEMPLATE_SOURCE")"
+          TEMPLATE_DEST="/root/.local/share/godot/export_templates/4.3.stable"
+          mkdir -p "$TEMPLATE_DEST"
+          cp -a "$TEMPLATE_DIR/." "$TEMPLATE_DEST/"
+          test -s "$TEMPLATE_DEST/android_debug.apk"
+          test -s "$TEMPLATE_DEST/android_release.apk"
           keytool -genkeypair -v -keystore /root/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" || true
 
       - name: Install complete Android SDK toolchain
